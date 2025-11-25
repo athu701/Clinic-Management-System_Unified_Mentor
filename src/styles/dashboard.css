@@ -1,0 +1,86 @@
+.page-container {
+  padding: 30px;
+  background: #f2f7ff;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0a4ea3;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 96, 255, 0.1);
+}
+
+.btn-primary {
+  background: #0a74ff;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #005ad6;
+}
+
+.patient-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.patient-table th {
+  background: #e2edff;
+  padding: 12px;
+  color: #0a4ea3;
+}
+
+.patient-table td {
+  padding: 12px;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: #2e89ff;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff4b4b;
+  color: white;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #9ac3ff;
+  background: #f7fbff;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.form-label {
+  font-weight: bold;
+  color: #0a4ea3;
+}
+
+.form-box {
+  width: 450px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 5px 15px rgba(0, 96, 255, 0.15);
+}
