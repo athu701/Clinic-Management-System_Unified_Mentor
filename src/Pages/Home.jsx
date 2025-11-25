@@ -9,7 +9,6 @@ export default function Home() {
     const role = localStorage.getItem("role");
 
     if (uid && role) {
-      // Redirect based on role
       if (role === "doctor") navigate("/doctor-dashboard");
       else if (role === "receptionist") navigate("/receptionist-dashboard");
       else if (role === "admin") navigate("/admin-dashboard");
@@ -19,14 +18,13 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem("uid");
     localStorage.removeItem("role");
-    window.location.reload(); // reload to show login portal
+    window.location.reload();
   };
 
   const uid = localStorage.getItem("uid");
   const role = localStorage.getItem("role");
 
   if (uid && role) {
-    // Logged in view with logout button
     return (
       <div
         style={{
@@ -49,9 +47,7 @@ export default function Home() {
             width: "100%",
           }}
         >
-          <h1 style={{ marginBottom: "10px", color: "#1a237e" }}>
-            Welcome!
-          </h1>
+          <h1 style={{ marginBottom: "10px", color: "#1a237e" }}>Welcome!</h1>
           <p style={{ color: "#555", marginBottom: "30px" }}>
             Logged in as <b>{role}</b>
           </p>
@@ -78,7 +74,6 @@ export default function Home() {
     );
   }
 
-  // Not logged in view with login portals
   return (
     <div
       style={{

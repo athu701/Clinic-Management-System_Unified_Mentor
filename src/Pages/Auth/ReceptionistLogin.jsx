@@ -12,13 +12,11 @@ export default function ReceptionistLogin() {
   const navigate = useNavigate();
 
   async function handleLogin() {
-    setErr(""); // reset error
+    setErr("");
     try {
-      // Firebase Auth login
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
 
-      // Fetch user role from Realtime DB
       const userRef = ref(db, `users/${uid}`);
       const snapshot = await get(userRef);
 
@@ -26,15 +24,13 @@ export default function ReceptionistLogin() {
         const userData = snapshot.val();
 
         if (userData.role === "receptionist") {
-          // Save role in localStorage for ProtectedRoute
           localStorage.setItem("role", "receptionist");
           localStorage.setItem("uid", uid);
 
-          // Redirect to dashboard
           navigate("/Receptionist-dashboard");
         } else {
           setErr("Not authorized as receptionist.");
-          await auth.signOut(); // optional
+          await auth.signOut();
         }
       } else {
         setErr("User record not found in database.");
@@ -66,7 +62,9 @@ export default function ReceptionistLogin() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="auth-btn" onClick={handleLogin}>Login</button>
+        <button className="auth-btn" onClick={handleLogin}>
+          Login
+        </button>
 
         {err && <p style={{ color: "red", marginTop: "10px" }}>{err}</p>}
       </div>

@@ -10,7 +10,6 @@ export default function ReceptionistDashboard() {
   const [currentReceptionist, setCurrentReceptionist] = useState({});
   const receptionistId = localStorage.getItem("uid");
 
-  // Fetch all doctors
   useEffect(() => {
     const usersRef = ref(db, "users/");
     const unsubscribe = onValue(usersRef, (snapshot) => {
@@ -18,12 +17,11 @@ export default function ReceptionistDashboard() {
       const docList = Object.entries(data)
         .filter(([uid, value]) => value.role === "doctor")
         .reduce((acc, [uid, value]) => {
-          acc[uid] = value.name; // store name by UID
+          acc[uid] = value.name;
           return acc;
         }, {});
       setDoctors(docList);
 
-      // Set current receptionist info
       const rec = Object.entries(data)
         .filter(([uid, value]) => uid === receptionistId)
         .map(([uid, value]) => value)[0];
@@ -33,7 +31,6 @@ export default function ReceptionistDashboard() {
     return () => unsubscribe();
   }, [receptionistId]);
 
-  // Fetch patients grouped by doctor
   useEffect(() => {
     const patientsRef = ref(db, "patients/");
     const unsubscribe = onValue(patientsRef, (snapshot) => {
@@ -57,7 +54,6 @@ export default function ReceptionistDashboard() {
         }
       }
 
-      // Sort patients under each doctor by token
       for (const docId in grouped) {
         grouped[docId].patients.sort((a, b) => a.token - b.token);
       }
@@ -68,49 +64,42 @@ export default function ReceptionistDashboard() {
     return () => unsubscribe();
   }, [receptionistId, doctors]);
 
-  // Delete patient and adjust tokens
-// Delete patient and adjust tokens
-const handleDelete = async (patientId, doctorId) => {
-  const patientRef = ref(db, `patients/${doctorId}/${patientId}`);
-  const snapshot = await new Promise((resolve) =>
-    onValue(patientRef, resolve, { onlyOnce: true })
-  );
-  const patient = snapshot.val();
-  if (!patient) return;
-
-  const tokenDeleted = patient.token;
-  const status = patient.status || "waiting";
-
-  // If token is -1, delete immediately
-  if (tokenDeleted === -1) {
-    await remove(patientRef);
-    alert("Patient deleted successfully.");
-    return;
-  }
-
-  if (status === "waiting") {
-    // Remove patient first
-    await remove(patientRef);
-
-    // Adjust tokens of other waiting patients
-    const allPatientsRef = ref(db, `patients/${doctorId}/`);
-    const allSnapshot = await new Promise((resolve) =>
-      onValue(allPatientsRef, resolve, { onlyOnce: true })
+  const handleDelete = async (patientId, doctorId) => {
+    const patientRef = ref(db, `patients/${doctorId}/${patientId}`);
+    const snapshot = await new Promise((resolve) =>
+      onValue(patientRef, resolve, { onlyOnce: true })
     );
-    const allPatients = allSnapshot.val() || {};
+    const patient = snapshot.val();
+    if (!patient) return;
 
-    for (const [pId, p] of Object.entries(allPatients)) {
-      if ((p.status || "waiting") === "waiting" && p.token > tokenDeleted) {
-        await set(ref(db, `patients/${doctorId}/${pId}/token`), p.token - 1);
-      }
+    const tokenDeleted = patient.token;
+    const status = patient.status || "waiting";
+
+    if (tokenDeleted === -1) {
+      await remove(patientRef);
+      alert("Patient deleted successfully.");
+      return;
     }
-  } else if (status === "completed") {
-    // Set token to -1 for completed patient
-    await set(ref(db, `patients/${doctorId}/${patientId}/token`), -1);
-    alert("Patient marked with token -1. You can delete now if needed.");
-  }
-};
 
+    if (status === "waiting") {
+      await remove(patientRef);
+
+      const allPatientsRef = ref(db, `patients/${doctorId}/`);
+      const allSnapshot = await new Promise((resolve) =>
+        onValue(allPatientsRef, resolve, { onlyOnce: true })
+      );
+      const allPatients = allSnapshot.val() || {};
+
+      for (const [pId, p] of Object.entries(allPatients)) {
+        if ((p.status || "waiting") === "waiting" && p.token > tokenDeleted) {
+          await set(ref(db, `patients/${doctorId}/${pId}/token`), p.token - 1);
+        }
+      }
+    } else if (status === "completed") {
+      await set(ref(db, `patients/${doctorId}/${patientId}/token`), -1);
+      alert("Patient marked with token -1. You can delete now if needed.");
+    }
+  };
 
   return (
     <div className="flex bg-[#E8F0FE] min-h-screen">
@@ -160,9 +149,10 @@ const handleDelete = async (patientId, doctorId) => {
                   <p className="text-gray-600 mt-1">Age: {patient.age}</p>
                   <p className="text-gray-600">Disease: {patient.disease}</p>
                   <p className="text-gray-600">Status: {patient.status}</p>
-                  
+
                   <p className="text-gray-600">
-                    Receptionist: {currentReceptionist.name} ({currentReceptionist.email})
+                    Receptionist: {currentReceptionist.name} (
+                    {currentReceptionist.email})
                   </p>
 
                   <div className="mt-4 flex gap-4">

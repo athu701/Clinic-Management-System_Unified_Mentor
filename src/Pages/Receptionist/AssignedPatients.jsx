@@ -9,7 +9,6 @@ export default function AssignedPatients() {
   const receptionistId = localStorage.getItem("uid");
   const navigate = useNavigate();
 
-  // Fetch assigned patients
   useEffect(() => {
     const patientsRef = ref(db, "patients/");
     const unsubscribe = onValue(patientsRef, (snapshot) => {
@@ -17,14 +16,15 @@ export default function AssignedPatients() {
       const list = Object.entries(data)
         .map(([id, value]) => ({ id, ...value }))
         .filter((p) => p.assignedReceptionist === receptionistId)
-        .sort((a, b) => a.assignedDoctorName.localeCompare(b.assignedDoctorName)); // optional sorting by doctor
+        .sort((a, b) =>
+          a.assignedDoctorName.localeCompare(b.assignedDoctorName)
+        );
       setPatients(list);
     });
 
     return () => unsubscribe();
   }, [receptionistId]);
 
-  // Delete patient and adjust tokens
   const handleDelete = async (id) => {
     const patientRef = ref(db, `patients/${id}`);
     const snapshot = await new Promise((resolve) =>
@@ -38,7 +38,6 @@ export default function AssignedPatients() {
 
     await remove(patientRef);
 
-    // Decrement tokens for other patients assigned to the same doctor
     const allPatientsRef = ref(db, "patients/");
     const allSnapshot = await new Promise((resolve) =>
       onValue(allPatientsRef, resolve, { onlyOnce: true })
@@ -56,7 +55,9 @@ export default function AssignedPatients() {
     <div className="flex bg-[#E8F0FE] min-h-screen">
       <Sidebar role="Receptionist" />
       <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6">🧾 Your Assigned Patients</h1>
+        <h1 className="text-3xl font-bold text-blue-700 mb-6">
+          🧾 Your Assigned Patients
+        </h1>
         <div className="grid grid-cols-1 gap-4">
           {patients.map((patient) => (
             <div
@@ -68,8 +69,12 @@ export default function AssignedPatients() {
               </h3>
               <p className="text-gray-600 mt-1">Age: {patient.age}</p>
               <p className="text-gray-600">Disease: {patient.disease}</p>
-              <p className="text-gray-600">Doctor: {patient.assignedDoctorName}</p>
-              <p className="text-gray-600">Receptionist: {patient.assignedReceptionistName}</p>
+              <p className="text-gray-600">
+                Doctor: {patient.assignedDoctorName}
+              </p>
+              <p className="text-gray-600">
+                Receptionist: {patient.assignedReceptionistName}
+              </p>
 
               <div className="mt-4 flex gap-4">
                 <Link

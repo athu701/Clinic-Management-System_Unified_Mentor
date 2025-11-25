@@ -12,13 +12,13 @@ export default function DoctorLogin() {
   const navigate = useNavigate();
 
   async function handleLogin() {
-    setErr(""); // reset error
+    setErr(""); 
     try {
-      // Firebase Auth login
+      
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
 
-      // Fetch user role from Realtime DB
+     
       const userRef = ref(db, `users/${uid}`);
       const snapshot = await get(userRef);
 
@@ -26,15 +26,15 @@ export default function DoctorLogin() {
         const userData = snapshot.val();
 
         if (userData.role === "doctor") {
-          // Save role in localStorage for ProtectedRoute
+          
           localStorage.setItem("role", "doctor");
           localStorage.setItem("uid", uid);
 
-          // Redirect to doctor dashboard
+         
           navigate("/doctor-dashboard");
         } else {
           setErr("Not authorized as doctor.");
-          await auth.signOut(); // optional
+          await auth.signOut(); 
         }
       } else {
         setErr("User record not found in database.");

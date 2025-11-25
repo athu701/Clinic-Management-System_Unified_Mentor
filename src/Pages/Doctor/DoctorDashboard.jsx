@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
 import { db } from "../../firebase";
 import { ref, onValue } from "firebase/database";
 import Sidebar from "../../components/Sidebar";
@@ -11,7 +16,6 @@ export default function DoctorDashboard() {
   const [doctor, setDoctor] = useState({ name: "", email: "" });
   const doctorId = localStorage.getItem("uid");
 
-  // Fetch doctor bio
   useEffect(() => {
     if (!doctorId) return;
     const userRef = ref(db, `users/${doctorId}`);
@@ -40,7 +44,9 @@ export default function DoctorDashboard() {
       <Sidebar role="Doctor" />
 
       <div className="flex-1 p-10">
-        <h1 className="text-3xl font-bold text-blue-700 mb-4">🧑‍⚕️ Doctor Dashboard</h1>
+        <h1 className="text-3xl font-bold text-blue-700 mb-4">
+          🧑‍⚕️ Doctor Dashboard
+        </h1>
 
         {/* Doctor Bio */}
         <div className="mb-8 bg-white p-4 rounded-xl shadow max-w-xl">

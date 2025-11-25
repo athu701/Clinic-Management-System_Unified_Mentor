@@ -19,7 +19,7 @@ export default function PatientsList() {
 
   async function deletePatient(id) {
     await deleteDoc(doc(db, "patients", id));
-    loadPatients(); // Refresh UI
+    loadPatients();
   }
 
   useEffect(() => {
@@ -48,7 +48,10 @@ export default function PatientsList() {
                 <td>{p.age}</td>
                 <td>{p.disease}</td>
                 <td>
-                  <button className="action-btn edit-btn" onClick={() => navigate(`/doctor/edit-patient/${p.id}`)}>
+                  <button
+                    className="action-btn edit-btn"
+                    onClick={() => navigate(`/doctor/edit-patient/${p.id}`)}
+                  >
                     Edit
                   </button>
 

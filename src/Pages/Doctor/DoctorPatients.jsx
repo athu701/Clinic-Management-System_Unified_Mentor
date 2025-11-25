@@ -4,10 +4,9 @@ import { ref, onValue, set } from "firebase/database";
 
 export default function DoctorPatients() {
   const [patients, setPatients] = useState([]);
-  const [selectedPatient, setSelectedPatient] = useState(null); // for view details
-  const doctorId = localStorage.getItem("uid"); // current logged-in doctor
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const doctorId = localStorage.getItem("uid");
 
-  // Fetch patients for this doctor
   useEffect(() => {
     const patientsRef = ref(db, `patients/${doctorId}/`);
     const unsubscribe = onValue(patientsRef, (snapshot) => {
@@ -28,38 +27,35 @@ export default function DoctorPatients() {
     return () => unsubscribe();
   }, [doctorId]);
 
-  // Mark patient as completed and adjust tokens
-// Mark patient as completed and adjust tokens
-const handleComplete = async (patientId, patientToken) => {
-  const patientRef = ref(db, `patients/${doctorId}/${patientId}`);
-  const snapshot = await new Promise((resolve) =>
-    onValue(patientRef, resolve, { onlyOnce: true })
-  );
-  const patient = snapshot.val();
-  if (!patient) return;
+  const handleComplete = async (patientId, patientToken) => {
+    const patientRef = ref(db, `patients/${doctorId}/${patientId}`);
+    const snapshot = await new Promise((resolve) =>
+      onValue(patientRef, resolve, { onlyOnce: true })
+    );
+    const patient = snapshot.val();
+    if (!patient) return;
 
-  // Mark this patient completed and set token to -1
-  await set(ref(db, `patients/${doctorId}/${patientId}/status`), "completed");
-  await set(ref(db, `patients/${doctorId}/${patientId}/token`), -1);
+    await set(ref(db, `patients/${doctorId}/${patientId}/status`), "completed");
+    await set(ref(db, `patients/${doctorId}/${patientId}/token`), -1);
 
-  // Adjust tokens of remaining waiting patients
-  const doctorRef = ref(db, `patients/${doctorId}/`);
-  const allSnapshot = await new Promise((resolve) =>
-    onValue(doctorRef, resolve, { onlyOnce: true })
-  );
-  const allPatients = allSnapshot.val() || {};
+    const doctorRef = ref(db, `patients/${doctorId}/`);
+    const allSnapshot = await new Promise((resolve) =>
+      onValue(doctorRef, resolve, { onlyOnce: true })
+    );
+    const allPatients = allSnapshot.val() || {};
 
-  for (const [id, p] of Object.entries(allPatients)) {
-    if ((p.status || "waiting") === "waiting" && p.token > patientToken) {
-      await set(ref(db, `patients/${doctorId}/${id}/token`), p.token - 1);
+    for (const [id, p] of Object.entries(allPatients)) {
+      if ((p.status || "waiting") === "waiting" && p.token > patientToken) {
+        await set(ref(db, `patients/${doctorId}/${id}/token`), p.token - 1);
+      }
     }
-  }
-};
-
+  };
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-blue-700 mb-6">🧾 Your Patients</h1>
+      <h1 className="text-3xl font-bold text-blue-700 mb-6">
+        🧾 Your Patients
+      </h1>
 
       {patients.length === 0 ? (
         <p className="text-gray-600">No patients assigned yet.</p>

@@ -11,7 +11,6 @@ export default function GenerateToken() {
   const receptionistId = localStorage.getItem("uid");
   const [doctors, setDoctors] = useState([]);
 
-  // Fetch doctors
   useState(() => {
     const doctorsRef = ref(db, "users/");
     const unsubscribe = onValue(doctorsRef, (snapshot) => {
@@ -29,16 +28,16 @@ export default function GenerateToken() {
 
     const doc = doctors.find((d) => d.uid === doctorId);
     if (!doc) return alert("Invalid doctor UID");
-    
+
     const newToken = Math.floor(Math.random() * 90000 + 10000);
 
-    const patientRef = push(ref(db, "patients")); 
+    const patientRef = push(ref(db, "patients"));
     await set(patientRef, {
       name,
       token: newToken,
       assignedReceptionist: receptionistId,
       assignedDoctor: doctorId,
-      assignedDoctorName: doc.name, // Save doctor name for dashboard
+      assignedDoctorName: doc.name,
       age: "",
       disease: "",
       tokenTime: Date.now(),
@@ -56,7 +55,9 @@ export default function GenerateToken() {
         <h1 className="text-3xl font-bold text-blue-700">🎫 Generate Token</h1>
 
         <div className="mt-6 bg-white p-6 rounded-xl shadow max-w-lg">
-          <label className="block text-gray-700 font-medium">Patient Name</label>
+          <label className="block text-gray-700 font-medium">
+            Patient Name
+          </label>
           <input
             type="text"
             placeholder="Enter name"
@@ -65,7 +66,9 @@ export default function GenerateToken() {
             className="w-full p-2 border border-blue-300 rounded mt-2"
           />
 
-          <label className="block text-gray-700 font-medium mt-4">Assign Doctor</label>
+          <label className="block text-gray-700 font-medium mt-4">
+            Assign Doctor
+          </label>
           <input
             type="text"
             placeholder="Enter Doctor UID"
@@ -83,7 +86,9 @@ export default function GenerateToken() {
 
           {token && (
             <div className="mt-4 p-4 bg-green-100 rounded-lg text-center">
-              <h2 className="text-2xl font-bold text-green-700">Token: {token}</h2>
+              <h2 className="text-2xl font-bold text-green-700">
+                Token: {token}
+              </h2>
               <p className="text-gray-600 mt-1">Give this number to patient</p>
             </div>
           )}

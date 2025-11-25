@@ -17,7 +17,6 @@ export default function AddPatient() {
 
   const receptionistId = localStorage.getItem("uid");
 
-  // Fetch doctors
   useEffect(() => {
     const doctorsRef = ref(db, "users/");
     const unsubscribe = onValue(doctorsRef, (snapshot) => {
@@ -30,7 +29,6 @@ export default function AddPatient() {
     return () => unsubscribe();
   }, []);
 
-  // Generate token for a specific doctor
   const generateToken = async (doctorId) => {
     const doctorRef = ref(db, `patients/${doctorId}`);
     const snapshot = await new Promise((resolve) =>
@@ -46,12 +44,11 @@ export default function AddPatient() {
     return maxToken + 1;
   };
 
-  // Add patient under doctorId
   const handleAddPatient = async () => {
-    if (!name || !doctorId) return alert("Patient name and doctor selection are required!");
+    if (!name || !doctorId)
+      return alert("Patient name and doctor selection are required!");
 
     try {
-      // Fetch receptionist name
       const recRef = ref(db, `users/${receptionistId}`);
       const recSnapshot = await new Promise((resolve) =>
         onValue(recRef, resolve, { onlyOnce: true })
@@ -59,10 +56,8 @@ export default function AddPatient() {
       const recData = recSnapshot.val() || {};
       const receptionistName = recData.name || "Receptionist";
 
-      // Generate token for this doctor
       const newToken = await generateToken(doctorId);
 
-      // Add patient under this doctor
       const patientRef = push(ref(db, `patients/${doctorId}`));
       await set(patientRef, {
         name,
@@ -101,10 +96,14 @@ export default function AddPatient() {
     <div className="flex bg-[#E8F0FE] min-h-screen">
       <Sidebar role="Receptionist" />
       <div className="flex-1 p-10">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6">➕ Add New Patient</h1>
+        <h1 className="text-3xl font-bold text-blue-700 mb-6">
+          ➕ Add New Patient
+        </h1>
 
         <div className="bg-white p-6 rounded-xl shadow max-w-lg">
-          <label className="block text-gray-700 font-medium">Patient Name</label>
+          <label className="block text-gray-700 font-medium">
+            Patient Name
+          </label>
           <input
             type="text"
             placeholder="Enter patient name"
@@ -122,7 +121,9 @@ export default function AddPatient() {
             className="w-full p-2 border border-blue-300 rounded mt-2"
           />
 
-          <label className="block text-gray-700 font-medium mt-4">Disease</label>
+          <label className="block text-gray-700 font-medium mt-4">
+            Disease
+          </label>
           <input
             type="text"
             placeholder="Enter disease"
@@ -131,7 +132,9 @@ export default function AddPatient() {
             className="w-full p-2 border border-blue-300 rounded mt-2"
           />
 
-          <label className="block text-gray-700 font-medium mt-4">Assign Doctor</label>
+          <label className="block text-gray-700 font-medium mt-4">
+            Assign Doctor
+          </label>
           <input
             type="text"
             placeholder="Search doctor by name or UID"
@@ -163,7 +166,9 @@ export default function AddPatient() {
 
           {token && (
             <div className="mt-4 p-4 bg-green-100 rounded-lg text-center">
-              <h2 className="text-2xl font-bold text-green-700">Token: {token}</h2>
+              <h2 className="text-2xl font-bold text-green-700">
+                Token: {token}
+              </h2>
               <p className="text-gray-600 mt-1">Give this number to patient</p>
             </div>
           )}

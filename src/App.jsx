@@ -17,40 +17,44 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./Pages/Admin/AdminLogin";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 
-
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/" element={<Home />} />
 
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="/receptionist-login" element={<ReceptionistLogin />} />
 
-        <Route path="/doctor-dashboard" element={
-          <ProtectedRoute role="doctor">
-            <DoctorDashboard />
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/doctor-dashboard"
+          element={
+            <ProtectedRoute role="doctor">
+              <DoctorDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/receptionist-dashboard" element={
-          <ProtectedRoute role="receptionist">
-            <ReceptionistDashboard />
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/receptionist-dashboard"
+          element={
+            <ProtectedRoute role="receptionist">
+              <ReceptionistDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/add-patient" element={<AddPatient />} />
-       <Route path="/edit-patient/:doctorId/:patientId" element={<EditPatient />} />
-        <Route path="/assigned-patients" element={<AssignedPatients/>} />
-        <Route path="/doctor-patients" element={<DoctorPatients/>} />
-
+        <Route
+          path="/edit-patient/:doctorId/:patientId"
+          element={<EditPatient />}
+        />
+        <Route path="/assigned-patients" element={<AssignedPatients />} />
+        <Route path="/doctor-patients" element={<DoctorPatients />} />
 
         {/* admin */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
       </Routes>
     </BrowserRouter>
   );

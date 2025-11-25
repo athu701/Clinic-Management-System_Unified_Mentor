@@ -5,18 +5,17 @@ import { ref, onValue, set, remove } from "firebase/database";
 import "../../styles/dashboard.css";
 
 export default function EditPatient() {
-  const { doctorId, patientId } = useParams(); // both doctorId and patientId
+  const { doctorId, patientId } = useParams();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [disease, setDisease] = useState("");
-  const [assignedDoctorId, setAssignedDoctorId] = useState(""); // UID
-  const [assignedDoctorName, setAssignedDoctorName] = useState(""); // Name
+  const [assignedDoctorId, setAssignedDoctorId] = useState("");
+  const [assignedDoctorName, setAssignedDoctorName] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Load patient info
   useEffect(() => {
     if (!doctorId || !patientId) return;
     const patientRef = ref(db, `patients/${doctorId}/${patientId}`);
@@ -33,7 +32,6 @@ export default function EditPatient() {
     });
   }, [doctorId, patientId]);
 
-  // Load all doctors
   useEffect(() => {
     const doctorsRef = ref(db, "users/");
     const unsubscribe = onValue(doctorsRef, (snapshot) => {
@@ -46,7 +44,6 @@ export default function EditPatient() {
     return () => unsubscribe();
   }, []);
 
-  // Save changes
   const saveChanges = async () => {
     if (!assignedDoctorId) return alert("Please select a doctor");
 
@@ -57,34 +54,34 @@ export default function EditPatient() {
       );
       const oldPatient = oldSnapshot.val() || {};
 
-     if (assignedDoctorId !== doctorId) {
-  // Move patient to new doctor
-  await remove(oldPatientRef);
-  await set(ref(db, `patients/${assignedDoctorId}/${patientId}`), {
-    name,
-    age,
-    disease,
-    assignedDoctor: assignedDoctorId,
-    assignedDoctorName: assignedDoctorName,
-    token: -1,
-    status: oldPatient.status || "waiting",
-    tokenTime: Date.now(),
-    assignedReceptionist: oldPatient.assignedReceptionist || localStorage.getItem("uid"), // ✅ add this
-  });
-} else {
-  // Update under same doctor
-  await set(oldPatientRef, {
-    name,
-    age,
-    disease,
-    assignedDoctor: assignedDoctorId,
-    assignedDoctorName: assignedDoctorName,
-    token: oldPatient.token || -1,
-    status: oldPatient.status || "waiting",
-    tokenTime: Date.now(),
-    assignedReceptionist: oldPatient.assignedReceptionist || localStorage.getItem("uid"), // ✅ ensure this exists
-  });
-}
+      if (assignedDoctorId !== doctorId) {
+        await remove(oldPatientRef);
+        await set(ref(db, `patients/${assignedDoctorId}/${patientId}`), {
+          name,
+          age,
+          disease,
+          assignedDoctor: assignedDoctorId,
+          assignedDoctorName: assignedDoctorName,
+          token: -1,
+          status: oldPatient.status || "waiting",
+          tokenTime: Date.now(),
+          assignedReceptionist:
+            oldPatient.assignedReceptionist || localStorage.getItem("uid"), // ✅ add this
+        });
+      } else {
+        await set(oldPatientRef, {
+          name,
+          age,
+          disease,
+          assignedDoctor: assignedDoctorId,
+          assignedDoctorName: assignedDoctorName,
+          token: oldPatient.token || -1,
+          status: oldPatient.status || "waiting",
+          tokenTime: Date.now(),
+          assignedReceptionist:
+            oldPatient.assignedReceptionist || localStorage.getItem("uid"),
+        });
+      }
 
       alert("Patient updated successfully!");
       navigate("/Receptionist-dashboard");
@@ -94,7 +91,6 @@ export default function EditPatient() {
     }
   };
 
-  // Filter doctors for search
   const filteredDoctors = doctors.filter(
     (doc) =>
       doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
